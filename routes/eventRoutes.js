@@ -5,18 +5,30 @@ const { protect, authorize } = require('../middleware/authMiddleware')
 const { upload } = require('../config/cloudinary')
 const Event = require('../models/Event')
 
-// ==================== EXISTING ROUTES (unchanged) ====================
+// ==================== PUBLIC EVENT ROUTES ====================
+// GET /api/events -> Fetch all events (Homepage & Explore page)
 router.get('/', c.getAll)
+
+// GET /api/events/slug/:slug -> Fetch event by slug
 router.get('/slug/:slug', c.getBySlug)
+
+// GET /api/events/organizer/:organizerId -> Fetch events for a specific organizer
 router.get('/organizer/:organizerId', c.getByOrganizer)
+
+// GET /api/events/:id -> Fetch event by MongoDB _id
 router.get('/:id', c.getById)
+
+// ==================== PROTECTED ORGANIZER / ADMIN ROUTES ====================
+// POST /api/events -> Create new event
 router.post('/', protect, authorize('organizer', 'admin'), c.create)
+
+// PUT /api/events/:id -> Update an existing event
 router.put('/:id', protect, authorize('organizer', 'admin'), c.update)
 
 // ==================== CLOUDINARY IMAGE UPLOADS ====================
 
 // POST /api/events/:id/cover
-// Single cover image (form-data field name: "image")
+// Upload single cover image (form-data field name: "image")
 router.post(
   '/:id/cover',
   protect,
@@ -52,7 +64,7 @@ router.post(
 )
 
 // POST /api/events/:id/gallery
-// Multiple gallery images (up to 5, form-data field name: "images")
+// Upload multiple gallery images (up to 5, form-data field name: "images")
 router.post(
   '/:id/gallery',
   protect,

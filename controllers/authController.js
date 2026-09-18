@@ -107,3 +107,33 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ message: err.message })
   }
 }
+
+// PUT /api/users/profile
+// Protected route for attendee to update their own profile
+exports.updateProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.name = req.body.name || user.name;
+    user.phone = req.body.phone || user.phone;
+    user.avatar = req.body.avatar || user.avatar; // Cloudinary URL
+    
+    if (req.body.password) {
+      user.password = req.body.password; // Assuming your model hashes this on save
+    }
+
+    const updatedUser = await user.save();
+    
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      role: updatedUser.role,
+      phone: updatedUser.phone,
+      avatar: updatedUser.avatar
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
