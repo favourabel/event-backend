@@ -8,6 +8,7 @@ const resultSchema = new mongoose.Schema({
   eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' },
   score: Number,
   totalPoints: Number,
+  totalQuestions: Number,
   percentage: Number,
   passed: Boolean,
   completionTime: String,
